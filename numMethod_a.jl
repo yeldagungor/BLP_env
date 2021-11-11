@@ -188,7 +188,7 @@ function FOC6(p_1, p_2, p_3, p_4, p_5, p_6, p_7, p_8, p_9, p_10)
     β_3_t = β_3[:,t];
     ξ_t = charProduct_2[1,:,t];
 
-    for i in 1:S
+   for i in 1:S
 
         prod1 = exp(β_0_t[i] + β_1_t[i]*charProduct_1[1,1,t] + β_2_t[i]*charProduct_1[2,1,t] - (abs(β_3_t[i])*p_1) + ξ_t[1])
         prod2 = exp(β_0_t[i] + β_1_t[i]*charProduct_1[1,2,t] + β_2_t[i]*charProduct_1[2,2,t] - (abs(β_3_t[i])*p_2) + ξ_t[2])

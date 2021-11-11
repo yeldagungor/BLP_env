@@ -29,7 +29,7 @@
 
     #part a
     include("numMethod_a.jl");
-    S = 1000; #1 million simulations
+    S = 1000000; #1 million simulations
     priceVec = zeros(J,T); #Initialize
     #beta draws
     d_0 = Normal(-2,1); β_0 = rand(d_0,(S,T)); 
@@ -44,6 +44,8 @@
             initP = rand(1:10,10);
 
             model = Model(Ipopt.Optimizer);
+            set_optimizer_attribute(model, "max_iter", 500)
+            set_optimizer_attribute(model, "max_cpu_time",  3600.0)
             register(model,:FOC1, 10, FOC1; autodiff=true); #model object, function object, number of inputs, function
             register(model,:FOC2, 10, FOC2; autodiff=true);
             register(model,:FOC3, 10, FOC3; autodiff=true);
@@ -55,32 +57,33 @@
             register(model,:FOC9, 10, FOC9; autodiff=true);
             register(model,:FOC10, 10, FOC10; autodiff=true);
 
-            @variable(model, mc[1,t] <= p_1 <=1000, start = initP[1]);
-            @variable(model, mc[2,t] <= p_2 <=1000, start = initP[2]);
-            @variable(model, mc[3,t] <= p_3 <=1000, start = initP[3]);
-            @variable(model, mc[4,t] <= p_4 <=1000, start = initP[4]);
-            @variable(model, mc[5,t] <= p_5 <=1000, start = initP[5]);
-            @variable(model, mc[6,t] <= p_6 <=1000, start = initP[6]);
-            @variable(model, mc[7,t] <= p_7 <=1000, start = initP[7]);
-            @variable(model, mc[8,t] <= p_8 <=1000, start = initP[8]);
-            @variable(model, mc[9,t] <= p_9 <=1000, start = initP[9]);
-            @variable(model, mc[10,t] <= p_10 <=1000, start = initP[10]);
-            @NLobjective(model, Min, 0)
+            @variable(model, mc[1,t] <= p_1 <=3000, start = mc[1,t] );
+            @variable(model, mc[2,t] <= p_2 <=3000, start = mc[2,t] );
+            @variable(model, mc[3,t] <= p_3 <=3000, start = mc[3,t] );
+            @variable(model, mc[4,t] <= p_4 <=3000, start = mc[4,t] );
+            @variable(model, mc[5,t] <= p_5 <=3000, start = mc[5,t] );
+            @variable(model, mc[6,t] <= p_6 <=3000, start = mc[6,t] );
+            @variable(model, mc[7,t] <= p_7 <=3000, start = mc[7,t] );
+            @variable(model, mc[8,t] <= p_8 <=3000, start = mc[8,t] );
+            @variable(model, mc[9,t] <= p_9 <=3000, start = mc[9,t] );
+            @variable(model, mc[10,t] <= p_10 <=3000, start = mc[10,t] );
+            @NLobjective(model, Min, 1)
 
-            @NLconstraint(model, FOC1(p_1, p_2, p_3, p_4, p_5, p_6, p_7, p_8, p_9, p_10) == 0)
+            @NLconstraints(model, begin FOC1(p_1, p_2, p_3, p_4, p_5, p_6, p_7, p_8, p_9, p_10) == 0
+            FOC2(p_1, p_2, p_3, p_4, p_5, p_6, p_7, p_8, p_9, p_10) == 0
+            FOC3(p_1, p_2, p_3, p_4, p_5, p_6, p_7, p_8, p_9, p_10) == 0
+            FOC4(p_1, p_2, p_3, p_4, p_5, p_6, p_7, p_8, p_9, p_10) == 0
+            FOC5(p_1, p_2, p_3, p_4, p_5, p_6, p_7, p_8, p_9, p_10) == 0
+            FOC6(p_1, p_2, p_3, p_4, p_5, p_6, p_7, p_8, p_9, p_10) == 0
+            FOC7(p_1, p_2, p_3, p_4, p_5, p_6, p_7, p_8, p_9, p_10) == 0
+            FOC8(p_1, p_2, p_3, p_4, p_5, p_6, p_7, p_8, p_9, p_10) == 0
+            FOC9(p_1, p_2, p_3, p_4, p_5, p_6, p_7, p_8, p_9, p_10) == 0
+            FOC10(p_1, p_2, p_3, p_4, p_5, p_6, p_7, p_8, p_9, p_10) == 0 end)
             
-            add_NL_constraint(model, :(FOC2($(p_1), $(p_2), $(p_3), $(p_4), $(p_5),$(p_6), $(p_7), $(p_8), $(p_9),$(p_10))== 0))
-            add_NL_constraint(model, :(FOC3($(p_1), $(p_2), $(p_3), $(p_4), $(p_5),$(p_6), $(p_7), $(p_8), $(p_9),$(p_10))== 0))
-            add_NL_constraint(model, :(FOC4($(p_1), $(p_2), $(p_3), $(p_4), $(p_5),$(p_6), $(p_7), $(p_8), $(p_9),$(p_10))== 0))
-            add_NL_constraint(model, :(FOC5($(p_1), $(p_2), $(p_3), $(p_4), $(p_5),$(p_6), $(p_7), $(p_8), $(p_9),$(p_10))== 0))
-            add_NL_constraint(model, :(FOC6($(p_1), $(p_2), $(p_3), $(p_4), $(p_5),$(p_6), $(p_7), $(p_8), $(p_9),$(p_10))== 0))
-            add_NL_constraint(model, :(FOC7($(p_1), $(p_2), $(p_3), $(p_4), $(p_5),$(p_6), $(p_7), $(p_8), $(p_9),$(p_10))== 0))
-            add_NL_constraint(model, :(FOC8($(p_1), $(p_2), $(p_3), $(p_4), $(p_5),$(p_6), $(p_7), $(p_8), $(p_9),$(p_10))== 0))
-            add_NL_constraint(model, :(FOC9($(p_1), $(p_2), $(p_3), $(p_4), $(p_5),$(p_6), $(p_7), $(p_8), $(p_9),$(p_10))== 0))
-            add_NL_constraint(model, :(FOC10($(p_1), $(p_2), $(p_3), $(p_4), $(p_5),$(p_6), $(p_7), $(p_8), $(p_9),$(p_10))== 0))
-
+         
             p = [p_1, p_2, p_3, p_4, p_5, p_6, p_7, p_8, p_9, p_10];
-            @show JuMP.optimize!(model)
+            set_silent(model)
+            JuMP.optimize!(model)
             @show JuMP.termination_status(model)
             priceVec[:,t] = JuMP.value.(p)
             
