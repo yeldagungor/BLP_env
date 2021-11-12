@@ -1,5 +1,5 @@
 using Distributed # Introduce package for parallelization
-addprocs(3) # Introduce CPU number
+addprocs(35) # Introduce CPU number
 @everywhere cd(@__DIR__) 
 @everywhere using LinearAlgebra
 @everywhere using DataFrames
@@ -16,7 +16,7 @@ addprocs(3) # Introduce CPU number
 @everywhere T = 10; @everywhere J = 10;@everywhere K = 2;@everywhere L = 2;
 
 
-@sync @distributed for i = 1:100
+@sync @distributed for i = 70:86
     Random.seed!(1+i)
 include("dataGenPar.jl");
 

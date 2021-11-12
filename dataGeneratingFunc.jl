@@ -29,7 +29,7 @@
 
     #part a
     include("numMethod_a.jl");
-    S = 1000000; #1 million simulations
+    S = 100; #1 million simulations
     priceVec = zeros(J,T); #Initialize
     #beta draws
     d_0 = Normal(-2,1); β_0 = rand(d_0,(S,T)); 
